@@ -1,9 +1,9 @@
 mod utils;
 
-use wasm_bindgen::prelude::*;
-use std::fmt;
-use js_sys;
 use fixedbitset::FixedBitSet;
+use js_sys;
+use std::fmt;
+use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 pub struct Universe {
@@ -78,22 +78,25 @@ impl Universe {
                 let cell = self.cells[idx];
                 let live_neighbors = self.live_neighbor_count(row, col);
 
-                next.set(idx, match (cell, live_neighbors) {
-                    // Rule 1: Any live cell with fewer than two live neighbours
-                    // dies, as if caused by underpopulation.
-                    (true, x) if x < 2 => false,
-                    // Rule 2: Any live cell with two or three live neighbours
-                    // lives on to the next generation.
-                    (true, 2) | (true, 3) => true,
-                    // Rule 3: Any live cell with more than three live
-                    // neighbours dies, as if by overpopulation.
-                    (true, x) if x > 3 => false,
-                    // Rule 4: Any dead cell with exactly three live neighbours
-                    // becomes a live cell, as if by reproduction.
-                    (false, 3) => true,
-                     // All other cells remain in the same state.
-                    (otherwise, _) => otherwise
-                });
+                next.set(
+                    idx,
+                    match (cell, live_neighbors) {
+                        // Rule 1: Any live cell with fewer than two live neighbours
+                        // dies, as if caused by underpopulation.
+                        (true, x) if x < 2 => false,
+                        // Rule 2: Any live cell with two or three live neighbours
+                        // lives on to the next generation.
+                        (true, 2) | (true, 3) => true,
+                        // Rule 3: Any live cell with more than three live
+                        // neighbours dies, as if by overpopulation.
+                        (true, x) if x > 3 => false,
+                        // Rule 4: Any dead cell with exactly three live neighbours
+                        // becomes a live cell, as if by reproduction.
+                        (false, 3) => true,
+                        // All other cells remain in the same state.
+                        (otherwise, _) => otherwise,
+                    },
+                );
             }
         }
 
@@ -136,7 +139,6 @@ impl Universe {
             self.cells.set(idx, true);
         }
     }
-
 }
 
 impl fmt::Display for Universe {
